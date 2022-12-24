@@ -1,0 +1,79 @@
+
+{% extends "base.html" %}
+{% block title %} Query Result {% endblock %}
+{% block content %}
+Enter date and time details to find potential rideshares with others.
+<form method="POST" action="#">
+    <div class="form-group">
+    
+    {{ form.csrf_token }}
+    
+        {{ form.rideDate.label }}
+        {{ form.rideDate(size=20) }}
+    
+    
+    {% if form.rideDate.errors %}
+    <ul class="errors">
+        {% for error in form.rideDate.errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+&nbsp;
+    {{ form.startTime.label }}
+    {{ form.startTime(size=20) }}
+
+
+{% if form.startTime.errors %}
+<ul class="errors">
+    {% for error in form.startTime.errors %}
+        <li>{{ error }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+    &nbsp;
+
+    {{ form.endTime.label }}
+    {{ form.endTime(size=20) }}
+
+
+{% if form.endTime.errors %}
+<ul class="errors">
+    {% for error in form.endTime.errors %}
+        <li>{{ error }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+&nbsp;
+
+    <input type="submit" class="btn btn-primary btn-sm" value="Search">
+    </div>
+</form>
+
+<br/>
+
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Full Name</th>
+        <th scope="col">Phone Number</th>
+        <th scope="col">Departure Date</th>
+        <th scope="col">Departure Time</th>
+      </tr>
+</thead>
+<tbody>
+{% for item in data %}
+    <tr>
+        <th scope="row">{{loop.index}}</th>
+        <td>{{item.name}}</td>
+        <td>{{item.telNumber}}</td>
+        <td>{{item.rideDate|strfdate}}</td>
+        <td>{{item.rideTime|strftime}}</td>
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}
