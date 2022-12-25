@@ -1,5 +1,5 @@
 from flask import Flask, redirect, url_for, render_template, request, session, flash
-from datetime import timedelta
+from datetime import datetime, timedelta
 import cgi
 from flask_sqlalchemy import SQLAlchemy
 from forms import rideshareForm, queryForm
@@ -42,7 +42,9 @@ def capture():
             currentPerson = rides(name=thisForm.name.data, telNumber=thisForm.telNumber.data, rideDate=thisForm.rideDate.data, rideTime=thisForm.rideTime.data)
             db.session.add(currentPerson)
             db.session.commit()
-            return render_template("success.html", form=thisForm)
+            session["name"] = thisForm.name.data
+            rides_list = rides.query.filter(rides.rideTime.between((thisForm.rideTime.data), (thisForm.rideTime.data)), rides.rideDate == thisForm.rideDate.data)            
+            return render_template("success.html", form=thisForm, data=rides_list)
         else:
             return render_template("capture.html", form=thisForm)
     else:
@@ -79,9 +81,12 @@ def ridesQuery():
     else:
         return render_template('queryResult.html', form=thisForm)
 
+@app.route("/")
 @app.route("/home")
 def home():
     return render_template("home.html")
+
+
 
 @app.template_filter('strfdate')
 def _jinja2_filter_date(date, fmt=None):
@@ -97,6 +102,11 @@ def _jinja2_filter_time(time, fmt=None):
     return native.strftime(format) 
 
 
+'''
+@app.template_filter('size')
+def findSize(data):
+    return data.count()
+'''
 
 if __name__ == "__main__":
     with app.app_context():     

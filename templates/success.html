@@ -1,5 +1,32 @@
 {% extends "base.html" %}
 {% block title %} Success {% endblock %}
 {% block content %}
-Your information has successfully been added to the correct list {{session["name"]}}
+Thanks, {{session["name"]}}, your information has successfully been added.
+</br>
+{% if data.count() == 1 %}
+No other riders at this time, search again later.
+{% else: %}
+<table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+          <th scope="col">#</th>
+          <th scope="col">Full Name</th>
+          <th scope="col">Phone Number</th>
+          <th scope="col">Departure Date</th>
+          <th scope="col">Departure Time</th>
+        </tr>
+  </thead>
+  <tbody>
+  {% for item in data %}
+      <tr>
+          <th scope="row">{{loop.index}}</th>
+          <td>{{item.name}}</td>
+          <td>{{item.telNumber}}</td>
+          <td>{{item.rideDate|strfdate}}</td>
+          <td>{{item.rideTime|strftime}}</td>
+      </tr>
+  {% endfor %}
+  </tbody>
+  </table>
+{% endif %}
 {% endblock %}
