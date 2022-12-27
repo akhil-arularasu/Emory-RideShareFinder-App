@@ -9,8 +9,8 @@ import phonenumbers
 class rideshareForm(FlaskForm):
     name = StringField('Name:', [validators.Length(min=1, max=26), validators.Regexp('^[A-Za-z\s]+$', message="Name can only be letters")])
     telNumber = StringField('Telephone:', validators=[DataRequired()])
-    rideDate = DateField('Departure Date:', validators=[DataRequired()])
-    rideTime = TimeField('Departure Time:', validators=[DataRequired()])
+    rideDate = DateField('Ride Date:', validators=[DataRequired()])
+    rideTime = TimeField('Ride Time:', validators=[DataRequired()])
 
 
     def validate_telNumber(form, telNumber):
@@ -28,7 +28,12 @@ class rideshareForm(FlaskForm):
 
 
 class queryForm(FlaskForm):
-    rideDate = DateField('Departure Date:', validators=[DataRequired()])
+    rideDate = DateField('Ride Date:', validators=[DataRequired()])
     startTime = TimeField('Start Time:', validators=[DataRequired()])
     endTime = TimeField('End Time:', validators=[DataRequired()])
-    
+
+'''    
+class updateForm(FlaskForm):
+    name = StringField('Name:', [validators.Length(min=1, max=26), validators.Regexp('^[A-Za-z\s]+$', message="Name can only be letters")])
+    foundRide = SelectField('Found Ride?', choices=[('Yes', 'Yes'), ('No', 'No')], validators=[DataRequired()])
+'''

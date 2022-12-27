@@ -39,11 +39,18 @@ def capture():
         '''
         thisForm = rideshareForm()
         if thisForm.validate_on_submit():
+            given_time = thisForm.rideTime.data
+            time_format_str = '%H:%M:%S'
+            given_time = datetime.strptime(str(given_time), time_format_str)
+            print(type(given_time))
+            print(type(given_time.time()))
+            given_start_time=(given_time)-timedelta(minutes=30)
+            given_end_time=(given_time)+timedelta(minutes=30)
             currentPerson = rides(name=thisForm.name.data, telNumber=thisForm.telNumber.data, rideDate=thisForm.rideDate.data, rideTime=thisForm.rideTime.data)
             db.session.add(currentPerson)
             db.session.commit()
             session["name"] = thisForm.name.data
-            rides_list = rides.query.filter(rides.rideTime.between((thisForm.rideTime.data), (thisForm.rideTime.data)), rides.rideDate == thisForm.rideDate.data)            
+            rides_list = rides.query.filter(rides.rideTime.between((given_start_time.time()), (given_end_time.time())), rides.rideDate == thisForm.rideDate.data)            
             return render_template("success.html", form=thisForm, data=rides_list)
         else:
             return render_template("capture.html", form=thisForm)
@@ -84,9 +91,18 @@ def ridesQuery():
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template("home.html")
+        if request.method == "POST":
+            return render_template("home.html")
+        else:
+            return render_template("home.html")
 
-
+@app.route("/update", methods=["POST", "GET"])
+def update():
+    thisForm = updateForm()
+    if request.method == "POST":
+        return render_template('update.html')
+    else:
+        return render_template('update.html')
 
 @app.template_filter('strfdate')
 def _jinja2_filter_date(date, fmt=None):
