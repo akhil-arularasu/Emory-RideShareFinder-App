@@ -62,6 +62,7 @@ Enter date and time details to find potential rideshares with others.
         <th scope="col">Phone Number</th>
         <th scope="col">Ride Date</th>
         <th scope="col">Ride Time</th>
+        <th scope="col">Ride Found?</th>
       </tr>
 </thead>
 <tbody>
@@ -72,6 +73,7 @@ Enter date and time details to find potential rideshares with others.
         <td>{{item.telNumber}}</td>
         <td>{{item.rideDate|strfdate}}</td>
         <td>{{item.rideTime|strftime}}</td>
+        <td>{{item.foundRide}}</td>
     </tr>
 {% endfor %}
 </tbody>

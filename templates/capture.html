@@ -2,6 +2,11 @@
 {% block title %} Main Page {% endblock %}
 
 {% block content %}
+
+{% if session["error"] %}
+{{session["error"]}} <a href="update">Update</a>
+{% endif %}
+
                 <form method="POST" action="#">
                     {{ form.csrf_token }}
                     <p>
@@ -48,7 +53,7 @@
                     {{ form.rideTime() }}
                 </p>
         
-                {% if form.rideDate.errors %}
+                {% if form.rideTime.errors %}
                     <ul class="errors">
                         {% for error in form.rideTime.errors %}
                             <li>{{ error }}</li>
@@ -60,5 +65,4 @@
                     <input type="submit" class="btn btn-primary btn-md" value="Add">
                 </p>
             </form>
-        </div>
 {% endblock %}

@@ -2,34 +2,29 @@ from flask import Flask, redirect, url_for, render_template, request, session, f
 from datetime import datetime, timedelta
 import cgi
 from flask_sqlalchemy import SQLAlchemy
-from forms import rideshareForm, queryForm
+from forms import rideshareForm, queryForm, updateForm
 import babel
 import dateutil
 from dateutil import parser
-
+from model import rides, db
 
 app = Flask(__name__)
-
 app.secret_key = "hello"
 app.config ['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rides.sqlite3'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.permament_session_lifetime = timedelta(minutes=1)
 
-db = SQLAlchemy(app)
-class rides(db.Model):
-    _id = db.Column("id", db.Integer, primary_key = True)
-    name = db.Column("Name", db.String(100))
-    telNumber = db.Column("TelephoneNumber", db.Integer)
-    rideDate = db.Column("Date", db.Integer)
-    rideTime = db.Column("Departure Time", db.Time)
-
+db.app = app
+db.init_app(app)
 
 def __init__(self, name, telNumber):
     self.name = name
     self.telNumber = telNumber
 
+
 @app.route("/capture", methods=["POST", "GET"])
 def capture():
+    session["error"] = ''
     if request.method == "POST":
         '''
         individualName = request.form["name"]
@@ -39,6 +34,11 @@ def capture():
         '''
         thisForm = rideshareForm()
         if thisForm.validate_on_submit():
+            given_name = thisForm.name.data
+            dbRecord = rides.query.filter_by(name=given_name).first()
+            if(dbRecord != None):
+                session["error"] = "Your ride information already exists in the system. To change your ride details, please go to "
+                return render_template("capture.html", form=thisForm)
             given_time = thisForm.rideTime.data
             time_format_str = '%H:%M:%S'
             given_time = datetime.strptime(str(given_time), time_format_str)
@@ -46,12 +46,13 @@ def capture():
             print(type(given_time.time()))
             given_start_time=(given_time)-timedelta(minutes=30)
             given_end_time=(given_time)+timedelta(minutes=30)
-            currentPerson = rides(name=thisForm.name.data, telNumber=thisForm.telNumber.data, rideDate=thisForm.rideDate.data, rideTime=thisForm.rideTime.data)
+            currentPerson = rides(name=thisForm.name.data, telNumber=thisForm.telNumber.data, rideDate=thisForm.rideDate.data, rideTime=thisForm.rideTime.data, rideFound='N')
             db.session.add(currentPerson)
             db.session.commit()
             session["name"] = thisForm.name.data
-            rides_list = rides.query.filter(rides.rideTime.between((given_start_time.time()), (given_end_time.time())), rides.rideDate == thisForm.rideDate.data)            
+            rides_list = rides.query.filter(rides.rideTime.between((given_start_time.time()), (given_end_time.time())), rides.rideDate == thisForm.rideDate.data)
             return render_template("success.html", form=thisForm, data=rides_list)
+
         else:
             return render_template("capture.html", form=thisForm)
     else:
@@ -100,9 +101,30 @@ def home():
 def update():
     thisForm = updateForm()
     if request.method == "POST":
-        return render_template('update.html')
+        if request.form.get('search'):
+            currentPerson = rides.query.filter_by(name=thisForm.name.data).one()
+            thisForm.name.data = currentPerson.name
+            thisForm.telNumber.data = currentPerson.telNumber
+            datetime_str = currentPerson.rideDate
+            rideDate = datetime.strptime(datetime_str, '%Y-%m-%d')
+            thisForm.rideDate.data = rideDate
+            thisForm.rideTime.data = currentPerson.rideTime
+            return render_template('update.html', form=thisForm)
+        else:
+            if thisForm.validate_on_submit():
+                currentPerson = rides.query.filter_by(name=thisForm.name.data).one()
+                currentPerson.rideDate = thisForm.rideDate.data
+                currentPerson.rideTime = thisForm.rideTime.data
+                currentPerson.telNumber = thisForm.telNumber.data
+                currentPerson.rideFound = 'Y'
+                if thisForm.foundRide.data == "No":
+                    currentPerson.rideFound = 'N'
+                db.session.commit()
+                return render_template('updateSuccess.html')
+            else:
+                return render_template('update.html', form=thisForm)
     else:
-        return render_template('update.html')
+        return render_template('update.html', form=thisForm)
 
 @app.template_filter('strfdate')
 def _jinja2_filter_date(date, fmt=None):
