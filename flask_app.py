@@ -7,6 +7,7 @@ import babel
 import dateutil
 from dateutil import parser
 from model import rides, db
+from socket import gethostname
 
 app = Flask(__name__)
 app.secret_key = "hello"
