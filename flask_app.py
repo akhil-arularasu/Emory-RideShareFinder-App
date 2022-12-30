@@ -93,23 +93,31 @@ def ridesQuery():
 @app.route("/")
 @app.route("/home")
 def home():
-        if request.method == "POST":
-            return render_template("home.html")
-        else:
-            return render_template("home.html")
+    
+    return render_template("home.html")
+        
 
 @app.route("/update", methods=["POST", "GET"])
 def update():
     thisForm = updateForm()
+    session["error"] = ''
     if request.method == "POST":
         if request.form.get('search'):
-            currentPerson = rides.query.filter_by(name=thisForm.name.data).one()
+            currentPerson = rides.query.filter_by(name=thisForm.name.data).first()
+            if(currentPerson == None):
+                session["error"] = "The name entered was not found. Please enter your information below"
+                thisForm = rideshareForm()
+                return render_template("capture.html", form=thisForm)
             thisForm.name.data = currentPerson.name
             thisForm.telNumber.data = currentPerson.telNumber
             datetime_str = currentPerson.rideDate
             rideDate = datetime.strptime(datetime_str, '%Y-%m-%d')
             thisForm.rideDate.data = rideDate
             thisForm.rideTime.data = currentPerson.rideTime
+            if currentPerson.rideFound == 'Y':
+                thisForm.foundRide.data = "Yes"
+            else:
+                thisForm.foundRide.data = 'No'
             return render_template('update.html', form=thisForm)
         else:
             if thisForm.validate_on_submit():
@@ -151,4 +159,4 @@ if __name__ == "__main__":
     with app.app_context():     
         db.create_all()
     if 'liveconsole' not in gethostname():
-    app.run(debug=True)
+        app.run(debug=True)

@@ -7,7 +7,7 @@
 {{session["error"]}} <a href="update">Update</a>
 {% endif %}
 
-                <form method="POST" action="#">
+                <form method="POST" action="capture">
                     {{ form.csrf_token }}
                     <p>
                         {{ form.name.label }}

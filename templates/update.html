@@ -2,9 +2,13 @@
 {% block title %} {% endblock %}
 {% block content %} 
 
+{% if session["error"] %}
+{{session["error"]}}
+{% endif %}
+
 Enter your name below to get your information and update afterwards:
 
-<form method="POST" action="#">
+<form method="POST" action="update">
     {{ form.csrf_token }}
     <p>
         {{ form.name.label }}
@@ -83,8 +87,6 @@ Enter your name below to get your information and update afterwards:
 {% endif %}
 
 </form>
-
-
 
 {% endblock %}
 
