@@ -83,6 +83,10 @@ def ridesQuery():
     thisForm = queryForm()
     if request.method == "POST":
         if thisForm.validate_on_submit():
+            # create a JSON with 3 form fields.
+            # call search microservice with JSON
+            # receive the JSON response from microservice and take the JSON data and create rides_list from the JSON data
+            # render template
             rides_list = rides.query.filter(rides.rideTime.between(thisForm.startTime.data, thisForm.endTime.data), rides.rideDate == thisForm.rideDate.data)            
             return render_template('queryResult.html', form=thisForm, data=rides_list)
         else:
@@ -148,12 +152,30 @@ def _jinja2_filter_time(time, fmt=None):
     format='%I:%M %p'
     return native.strftime(format) 
 
-
 '''
 @app.template_filter('size')
 def findSize(data):
     return data.count()
 '''
+
+@app.route("/suggestions", methods=["POST", "GET"])
+def suggestions():
+    if request.method == "POST":
+        if request.form.get('submit'):
+            suggestionSubject = request.form['txtsubject']
+            commentText = request.form['txtcomment']
+            log_message = "Subject: {} and Comment: {}".format(suggestionSubject, commentText)
+            save(log_message)
+            return render_template('suggestionSuccessPage.html') 
+    else:
+        return render_template('suggestions.html')
+
+def save(text, filepath='suggestions.txt'):
+    with open("suggestions.txt", "w") as f:
+        f.write(text)
+
+
+
 
 if __name__ == "__main__":
     with app.app_context():     

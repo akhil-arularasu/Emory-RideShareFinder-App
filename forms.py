@@ -38,7 +38,7 @@ class updateForm(FlaskForm):
     telNumber = StringField('Telephone:', validators=[DataRequired()])
     rideDate = DateField('Ride Date:', validators=[DataRequired()])
     rideTime = TimeField('Ride Time:', validators=[DataRequired()])
-    foundRide = SelectField('Found Ride?', choices=[('Yes', 'Yes'), ('No', 'No')], validators=[DataRequired()])
+    foundRide = SelectField('Rideshare Full?', choices=[('Yes', 'Yes'), ('No', 'No')], validators=[DataRequired()])
 
     def validate_telNumber(form, telNumber):
         if len(telNumber.data) > 16:
@@ -52,3 +52,7 @@ class updateForm(FlaskForm):
             input_number = phonenumbers.parse("+1"+telNumber.data)
             if not (phonenumbers.is_valid_number(input_number)):
                 raise ValidationError('Invalid phone number.')
+
+class suggestionsForm(FlaskForm):
+    subject = StringField('Subject:', validators=[DataRequired()])
+    comments = StringField('Comments:', validators=[DataRequired()])

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %} Success {% endblock %}
 {% block content %}
-Thanks, {{session["name"]}}, your information has successfully been added.
+Thanks, {{session["name"]}}, your information has successfully been added. Below others who leave 30 minutes before or after your requested time.
 </br>
 {% if data.count() == 1 %}
 No other riders leaving 30 minutes before or after your preferred time, use the <a href="query">Search</a> feature to expand your time window or search again later.
