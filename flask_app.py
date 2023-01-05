@@ -170,6 +170,10 @@ def suggestions():
     else:
         return render_template('suggestions.html')
 
+@app.route("/tutorial")
+def tutorial():
+    return render_template("tutorial.html")
+
 def save(text, filepath='suggestions.txt'):
     with open("suggestions.txt", "a") as f:
         f.write(text)
