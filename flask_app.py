@@ -171,7 +171,7 @@ def suggestions():
         return render_template('suggestions.html')
 
 def save(text, filepath='suggestions.txt'):
-    with open("suggestions.txt", "w") as f:
+    with open("suggestions.txt", "a") as f:
         f.write(text)
 
 
