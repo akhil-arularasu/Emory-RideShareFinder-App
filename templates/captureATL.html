@@ -1,0 +1,68 @@
+{% extends "baseATL.html" %}
+{% block title %} Main Page {% endblock %}
+
+{% block content %}
+
+{% if session["error"] %}
+{{session["error"]}} <a href="/atl/update">Update</a>
+{% endif %}
+
+                <form method="POST" action="/atl/capture">
+                    {{ form.csrf_token }}
+                    <p>
+                        {{ form.name.label }}
+                        {{ form.name(size=20) }}
+                    </p>
+                    
+                    {% if form.name.errors %}
+                    <ul class="errors">
+                        {% for error in form.name.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                
+                <p>
+                    {{ form.telNumber.label }}
+                    {{ form.telNumber() }}
+                </p>
+        
+                {% if form.telNumber.errors %}
+                    <ul class="errors">
+                        {% for error in form.telNumber.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <p>
+                    {{ form.rideDate.label }}
+                    {{ form.rideDate() }}
+                </p>
+        
+                {% if form.rideDate.errors %}
+                    <ul class="errors">
+                        {% for error in form.rideDate.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <p>
+                    {{ form.rideTime.label }}
+                    {{ form.rideTime() }}
+                </p>
+        
+                {% if form.rideTime.errors %}
+                    <ul class="errors">
+                        {% for error in form.rideTime.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <p>
+                    <input type="submit" class="btn btn-primary btn-md" value="Add">
+                </p>
+            </form>
+{% endblock %}

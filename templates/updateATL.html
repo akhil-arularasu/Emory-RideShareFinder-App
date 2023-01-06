@@ -1,0 +1,92 @@
+{% extends "baseATL.html" %}
+{% block title %} {% endblock %}
+{% block content %} 
+
+{% if session["error"] %}
+{{session["error"]}}
+{% endif %}
+
+Enter your name below to get your information and update afterwards:
+
+<form method="POST" action="/atl/update">
+    {{ form.csrf_token }}
+    <p>
+        {{ form.name.label }}
+        {{ form.name(size=20) }}
+
+    
+    {% if form.name.errors %}
+    <ul class="errors">
+        {% for error in form.name.errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+    &nbsp;
+    <input type="submit" class="btn btn-primary btn-md" value="Search" name="search">
+</p>
+
+{% if form.name.data %}
+<p>
+    {{ form.telNumber.label }}
+    {{ form.telNumber() }}
+</p>
+
+{% if form.telNumber.errors %}
+    <ul class="errors">
+        {% for error in form.telNumber.errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<p>
+    {{ form.rideDate.label }}
+    {{ form.rideDate() }}
+</p>
+
+{% if form.rideDate.errors %}
+    <ul class="errors">
+        {% for error in form.rideDate.errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<p>
+    {{ form.rideTime.label }}
+    {{ form.rideTime() }}
+</p>
+
+{% if form.rideTime.errors %}
+    <ul class="errors">
+        {% for error in form.rideTime.errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<p>
+    {{ form.foundRide.label }}
+    {{ form.foundRide(size=1) }}
+    
+</p>
+
+{% if form.foundRide.errors %}
+<ul class="errors">
+    {% for error in form.foundRide.errors %}
+        <li>{{ error }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<p>
+    <input type="submit" class="btn btn-primary btn-md" value="Update" name="update">
+</p>
+
+{% endif %}
+
+</form>
+
+{% endblock %}
+
