@@ -87,7 +87,7 @@ def ridesQuery():
             # call search microservice with JSON
             # receive the JSON response from microservice and take the JSON data and create rides_list from the JSON data
             # render template
-            rides_list = rides.query.filter(rides.rideTime.between(thisForm.startTime.data, thisForm.endTime.data), rides.rideDate == thisForm.rideDate.data)            
+            rides_list = rides.query.filter(rides.rideTime.between(thisForm.startTime.data, thisForm.endTime.data), rides.rideDate == thisForm.rideDate.data).order_by(rides.rideTime)          
             return render_template('queryResult.html', form=thisForm, data=rides_list)
         else:
             return render_template('queryResult.html', form=thisForm)
