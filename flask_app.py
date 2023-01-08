@@ -279,7 +279,7 @@ def ridesQuery_atl():
             # call search microservice with JSON
             # receive the JSON response from microservice and take the JSON data and create rides_list from the JSON data
             # render template
-            rides_list = rides_atl.query.filter(rides_atl.rideTime.between(thisForm.startTime.data, thisForm.endTime.data), rides_atl.rideDate == thisForm.rideDate.data)            
+            rides_list = rides_atl.query.filter(rides_atl.rideTime.between(thisForm.startTime.data, thisForm.endTime.data), rides_atl.rideDate == thisForm.rideDate.data).order_by(rides_atl.rideTime)            
             return render_template('queryResultATL.html', form=thisForm, data=rides_list)
         else:
             return render_template('queryResultATL.html', form=thisForm)
