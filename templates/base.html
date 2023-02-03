@@ -17,8 +17,11 @@
       color: #f2a900;
   }
 
-</style>
+  .custom {
+      width:180px
+  }
 
+</style>
         <body>
               <nav class="navbar navbar-custom navbar-expand-sm">
             <img src="{{url_for('static', filename='Emory-University-Eagles-logo-1.png')}}" align="left" width="55" height="55" />
@@ -28,11 +31,27 @@
                   <a class="navbar-brand" href="update">Update</a>
                   <a class="navbar-brand" href="suggestions">Suggestions</a>
                   <a class="navbar-brand" href="tutorial">Tutorial Vid</a>
+                  <a class="navbar-brand" href="recognition">About</a>
+
 
               </nav>
               <div class="px-4">
-                  <h3>Emory-Ox Airport Rideshare Finder</h3>
+              {% if "college" in session %}
               
+              {% if session["college"] == 'Oxford' and session["fromTo"] == "from" %}
+                  <h3>From Oxford to ATL Airport Rideshare Finder</h3>
+              {% endif %}
+              {% if session["college"] == "Oxford" and session["fromTo"] == "to" %}
+                  <h3>From ATL airport to Oxford Rideshare Finder</h3>
+              {% endif %}
+              {% if session["college"] == "Emory" and session["fromTo"] == "from" %}
+                  <h3>From Atlanta Campus to ATL Airport</h3>
+              {% endif %}
+              {% if session["college"] == "Emory" and session["fromTo"] == "to" %}
+                  <h3>From ATL Airport to Atlanta Campus</h3>
+              {% endif %}
+              {% endif %}
+
             {% block content %}
             {% endblock %}
             </div>

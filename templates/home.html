@@ -1,15 +1,61 @@
 {% extends "base.html" %}
 {% block title %}{% endblock %}
 {% block content %}
-Welcome! 
+
+{% if "college" in session %}
+Welcome!
+{% if session["college"] == "Oxford" and session["fromTo"] == "from" %}
+<b>Rideshares From Oxford Campus to Airport</b>
+<br/>
+{% endif %}
+{% if session["college"] == "Oxford" and session["fromTo"] == "to" %}
+<b>Rideshares From Airport to Oxford Campus</b>
+<br/>
+{% endif %}
+{% if session["college"] == "Emory" and session["fromTo"] == "from" %}
+<b>Rideshares From Atlanta Campus to Airport</b>
+<br/>
+{% endif %}
+{% if session["college"] == "Emory" and session["fromTo"] == "to" %}
+<b>Rideshares From Airport to Atlanta Campus</b>
+<br/>
+{% endif %}
+
 <br/>
 Click <a href="capture">Share</a> to enter your rideshare information and get added to the system. 
 <br/>
 Click <a href="query">Search</a> and enter your desired dates and times to view others who are leaving and need a ride.
 <br/>
 Click <a href="update">Update</a> and enter your name if you need to change any information about your ride.
+<br/>
+<br/>
+For other start/destination locations please click on one of the below options:
+<br/>
+{% else %}
+<br/>
+Please select a start/destination location before share/search:
+<br/>
 
+{% endif %}
+
+{% if session["college"] != "Oxford" or session["fromTo"] != "from" %}
 <br/>
+<a href="home?college=Oxford&fromTo=from" class="btn btn-primary custom">From Oxford Campus</a>
 <br/>
-For Emory Atlanta Campus Rideshares click: <a href="/atl/home">ATL Rideshare Home</a> 
+{% endif %}
+{% if session["college"] != "Oxford" or session["fromTo"] != "to" %}
+<br/>
+<a href="home?college=Oxford&fromTo=to" class="btn btn-primary custom">To Oxford Campus    </a>
+<br/>
+{% endif %}
+{% if session["college"] != "Emory" or session["fromTo"] != "from" %}
+<br/>
+<a href="home?college=Emory&fromTo=from" class="btn btn-primary custom">From Atlanta Campus</a>
+<br/>
+{% endif %}
+{% if session["college"] != "Emory" or session["fromTo"] != "to" %}
+<br/>
+<a href="home?college=Emory&fromTo=to" class="btn btn-primary custom">To Atlanta Campus    </a>
+<br/>
+{% endif %}
 {% endblock %}   

@@ -22,9 +22,11 @@ def __init__(self, name, telNumber):
     self.name = name
     self.telNumber = telNumber
 
-
 @app.route("/capture", methods=["POST", "GET"])
 def capture():
+    if "college" not in session:
+        return render_template("home.html")
+
     session["error"] = ''
     if request.method == "POST":
         '''
@@ -47,7 +49,7 @@ def capture():
             print(type(given_time.time()))
             given_start_time=(given_time)-timedelta(minutes=30)
             given_end_time=(given_time)+timedelta(minutes=30)
-            currentPerson = rides(name=thisForm.name.data, telNumber=thisForm.telNumber.data, rideDate=thisForm.rideDate.data, rideTime=thisForm.rideTime.data, rideFound='N')
+            currentPerson = rides(name=thisForm.name.data, telNumber=thisForm.telNumber.data, rideDate=thisForm.rideDate.data, rideTime=thisForm.rideTime.data, rideFound='N', college=session["college"], fromTo=session["fromTo"], location="ATL Airport")
             db.session.add(currentPerson)
             db.session.commit()
             session["name"] = thisForm.name.data
@@ -97,8 +99,21 @@ def ridesQuery():
 @app.route("/")
 @app.route("/home")
 def home():
+    print(request.args.get("college"))
+    print(request.args.get("fromTo"))
+    if (request.args.get("college")):
+        session["college"] = request.args.get("college")
+        session["fromTo"] = request.args.get("fromTo")
+        return render_template("home.html")
+    else:
+        return render_template("home.html")   
+
+@app.route("/refresh")
+def refresh():
+    if "college" in session:
+        session.pop("college")
+        session.pop("fromTo")
     return render_template("home.html")
-        
 
 @app.route("/update", methods=["POST", "GET"])
 def update():
@@ -168,6 +183,10 @@ def suggestions():
             return render_template('suggestionSuccessPage.html') 
     else:
         return render_template('suggestions.html')
+
+@app.route("/recognition")
+def recognition():
+    return render_template('recognition.html')
 
 @app.route("/atl/suggestions", methods=["POST", "GET"])
 def suggestions_atl():
@@ -287,7 +306,8 @@ def ridesQuery_atl():
         return render_template('queryResultATL.html', form=thisForm)
 
 if __name__ == "__main__":
-    with app.app_context():     
+    with app.app_context():
+        db.drop_all()
         db.create_all()
     if 'liveconsole' not in gethostname():
         app.run(debug=True)
