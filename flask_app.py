@@ -26,7 +26,6 @@ def __init__(self, name, telNumber):
 def capture():
     if "college" not in session:
         return render_template("home.html")
-
     session["error"] = ''
     if request.method == "POST":
         '''
@@ -82,6 +81,8 @@ def rideList():
 
 @app.route("/query", methods=["POST", "GET"])
 def ridesQuery():
+    if "college" not in session:
+        return render_template("home.html")
     thisForm = queryForm()
     if request.method == "POST":
         if thisForm.validate_on_submit():
@@ -89,7 +90,7 @@ def ridesQuery():
             # call search microservice with JSON
             # receive the JSON response from microservice and take the JSON data and create rides_list from the JSON data
             # render template
-            rides_list = rides.query.filter(rides.rideTime.between(thisForm.startTime.data, thisForm.endTime.data), rides.rideDate == thisForm.rideDate.data).order_by(rides.rideTime)          
+            rides_list = rides.query.filter(rides.rideTime.between(thisForm.startTime.data, thisForm.endTime.data), rides.rideDate == thisForm.rideDate.data, rides.college == session["college"], rides.fromTo == session["fromTo"]).order_by(rides.rideTime)          
             return render_template('queryResult.html', form=thisForm, data=rides_list)
         else:
             return render_template('queryResult.html', form=thisForm)
@@ -97,33 +98,34 @@ def ridesQuery():
         return render_template('queryResult.html', form=thisForm)
 
 @app.route("/")
+@app.route("/atl/*")
 @app.route("/home")
 def home():
+    if "college" in session:
+        session.pop("college")
+    if "fromTo" in session:
+        session.pop("fromTo")
     print(request.args.get("college"))
     print(request.args.get("fromTo"))
     if (request.args.get("college")):
         session["college"] = request.args.get("college")
-        session["fromTo"] = request.args.get("fromTo")
+        if request.args.get("fromTo"):
+            session["fromTo"] = request.args.get("fromTo")
         return render_template("home.html")
     else:
         return render_template("home.html")   
 
-@app.route("/refresh")
-def refresh():
-    if "college" in session:
-        session.pop("college")
-        session.pop("fromTo")
-    return render_template("home.html")
-
 @app.route("/update", methods=["POST", "GET"])
 def update():
+    if "college" not in session:
+        return render_template("home.html")
     thisForm = updateForm()
     session["error"] = ''
     if request.method == "POST":
         if request.form.get('search'):
-            currentPerson = rides.query.filter_by(name=thisForm.name.data).first()
+            currentPerson = rides.query.filter(rides.college == session["college"], rides.fromTo == session["fromTo"], rides.name == thisForm.name.data).first()
             if(currentPerson == None):
-                session["error"] = "The name entered was not found. Please enter your information below"
+                session["error"] = "The name entered was not found for this combination: " + session["fromTo"] + " " + session["college"] + " Please enter your information below or click Home."
                 thisForm = rideshareForm()
                 return render_template("capture.html", form=thisForm)
             thisForm.name.data = currentPerson.name
@@ -139,7 +141,7 @@ def update():
             return render_template('update.html', form=thisForm)
         else:
             if thisForm.validate_on_submit():
-                currentPerson = rides.query.filter_by(name=thisForm.name.data).one()
+                currentPerson = rides.query.filter(rides.college == session["college"], rides.fromTo == session["fromTo"], rides.name == thisForm.name.data).first()
                 currentPerson.rideDate = thisForm.rideDate.data
                 currentPerson.rideTime = thisForm.rideTime.data
                 currentPerson.telNumber = thisForm.telNumber.data
@@ -188,126 +190,17 @@ def suggestions():
 def recognition():
     return render_template('recognition.html')
 
-@app.route("/atl/suggestions", methods=["POST", "GET"])
-def suggestions_atl():
-    if request.method == "POST":
-        if request.form.get('submit'):
-            suggestionSubject = request.form['txtsubject']
-            commentText = request.form['txtcomment']
-            log_message = "Subject: {} and Comment: {}".format(suggestionSubject, commentText)
-            save(log_message)
-            return render_template('suggestionSuccessPageATL.html') 
-    else:
-        return render_template('suggestionsATL.html')
-
-
 @app.route("/tutorial")
 def tutorial():
     return render_template("tutorial.html")
 
-@app.route("/atl/tutorial")
-def tutorial_atl():
-    return render_template("tutorialATL.html")
-
-
 def save(text, filepath='suggestions.txt'):
     with open("suggestions.txt", "a") as f:
-        f.write(text)
-
-@app.route("/atl")
-@app.route("/atl/home")
-def home_atl():
-    return render_template("homeATL.html")
-        
-
-@app.route("/atl/capture", methods=["POST", "GET"])
-def capture_atl():
-    session["error"] = ''
-    if request.method == "POST":
-        thisForm = rideshareForm()
-        if thisForm.validate_on_submit():
-            given_name = thisForm.name.data
-            dbRecord = rides_atl.query.filter_by(name=given_name).first()
-            if(dbRecord != None):
-                session["error"] = "Your ride information already exists in the system. To change your ride details, please go to "
-                return render_template("captureATL.html", form=thisForm)
-            given_time = thisForm.rideTime.data
-            time_format_str = '%H:%M:%S'
-            given_time = datetime.strptime(str(given_time), time_format_str)
-            print(type(given_time))
-            print(type(given_time.time()))
-            given_start_time=(given_time)-timedelta(minutes=30)
-            given_end_time=(given_time)+timedelta(minutes=30)
-            currentPerson = rides_atl(name=thisForm.name.data, telNumber=thisForm.telNumber.data, rideDate=thisForm.rideDate.data, rideTime=thisForm.rideTime.data, rideFound='N')
-            db.session.add(currentPerson)
-            db.session.commit()
-            session["name"] = thisForm.name.data
-            rides_list = rides_atl.query.filter(rides_atl.rideTime.between((given_start_time.time()), (given_end_time.time())), rides_atl.rideDate == thisForm.rideDate.data)
-            return render_template("successATL.html", form=thisForm, data=rides_list)
-
-        else:
-            return render_template("captureATL.html", form=thisForm)
-    else:
-        thisForm = rideshareForm()
-        return render_template("captureATL.html", form=thisForm)
-
-@app.route("/atl/update", methods=["POST", "GET"])
-def update_atl():
-    thisForm = updateForm()
-    session["error"] = ''
-    if request.method == "POST":
-        if request.form.get('search'):
-            currentPerson = rides_atl.query.filter_by(name=thisForm.name.data).first()
-            if(currentPerson == None):
-                session["error"] = "The name entered was not found. Please enter your information below"
-                thisForm = rideshareForm()
-                return render_template("captureATL.html", form=thisForm)
-            thisForm.name.data = currentPerson.name
-            thisForm.telNumber.data = currentPerson.telNumber
-            datetime_str = currentPerson.rideDate
-            rideDate = datetime.strptime(datetime_str, '%Y-%m-%d')
-            thisForm.rideDate.data = rideDate
-            thisForm.rideTime.data = currentPerson.rideTime
-            if currentPerson.rideFound == 'Y':
-                thisForm.foundRide.data = "Yes"
-            else:
-                thisForm.foundRide.data = 'No'
-            return render_template('updateATL.html', form=thisForm)
-        else:
-            if thisForm.validate_on_submit():
-                currentPerson = rides_atl.query.filter_by(name=thisForm.name.data).one()
-                currentPerson.rideDate = thisForm.rideDate.data
-                currentPerson.rideTime = thisForm.rideTime.data
-                currentPerson.telNumber = thisForm.telNumber.data
-                currentPerson.rideFound = 'Y'
-                if thisForm.foundRide.data == "No":
-                    currentPerson.rideFound = 'N'
-                db.session.commit()
-                return render_template('updateSuccessATL.html')
-            else:
-                return render_template('updateATL.html', form=thisForm)
-    else:
-        return render_template('updateATL.html', form=thisForm)
-
-@app.route("/atl/query", methods=["POST", "GET"])
-def ridesQuery_atl():
-    thisForm = queryForm()
-    if request.method == "POST":
-        if thisForm.validate_on_submit():
-            # create a JSON with 3 form fields.
-            # call search microservice with JSON
-            # receive the JSON response from microservice and take the JSON data and create rides_list from the JSON data
-            # render template
-            rides_list = rides_atl.query.filter(rides_atl.rideTime.between(thisForm.startTime.data, thisForm.endTime.data), rides_atl.rideDate == thisForm.rideDate.data).order_by(rides_atl.rideTime)            
-            return render_template('queryResultATL.html', form=thisForm, data=rides_list)
-        else:
-            return render_template('queryResultATL.html', form=thisForm)
-    else:
-        return render_template('queryResultATL.html', form=thisForm)
+        f.write(text)        
 
 if __name__ == "__main__":
     with app.app_context():
-        db.drop_all()
+#        db.drop_all()
         db.create_all()
     if 'liveconsole' not in gethostname():
         app.run(debug=True)

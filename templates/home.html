@@ -2,7 +2,7 @@
 {% block title %}{% endblock %}
 {% block content %}
 
-{% if "college" in session %}
+{% if "college" in session and "fromTo" in session %}
 Welcome!
 {% if session["college"] == "Oxford" and session["fromTo"] == "from" %}
 <b>Rideshares From Oxford Campus to Airport</b>
@@ -28,34 +28,8 @@ Click <a href="query">Search</a> and enter your desired dates and times to view 
 <br/>
 Click <a href="update">Update</a> and enter your name if you need to change any information about your ride.
 <br/>
-<br/>
-For other start/destination locations please click on one of the below options:
-<br/>
-{% else %}
-<br/>
-Please select a start/destination location before share/search:
+Click <a href="home">Home</a> to reset your preferences and start again.
 <br/>
 
 {% endif %}
-
-{% if session["college"] != "Oxford" or session["fromTo"] != "from" %}
-<br/>
-<a href="home?college=Oxford&fromTo=from" class="btn btn-primary custom">From Oxford Campus</a>
-<br/>
-{% endif %}
-{% if session["college"] != "Oxford" or session["fromTo"] != "to" %}
-<br/>
-<a href="home?college=Oxford&fromTo=to" class="btn btn-primary custom">To Oxford Campus    </a>
-<br/>
-{% endif %}
-{% if session["college"] != "Emory" or session["fromTo"] != "from" %}
-<br/>
-<a href="home?college=Emory&fromTo=from" class="btn btn-primary custom">From Atlanta Campus</a>
-<br/>
-{% endif %}
-{% if session["college"] != "Emory" or session["fromTo"] != "to" %}
-<br/>
-<a href="home?college=Emory&fromTo=to" class="btn btn-primary custom">To Atlanta Campus    </a>
-<br/>
-{% endif %}
-{% endblock %}   
+{% endblock %}
