@@ -11,6 +11,7 @@
 &nbsp;&nbsp;&nbsp;
 <a href="home?college=Atlanta" class="btn btn-primary custom">Atlanta Campus</a>
 {% endif %}
+
 {% if session["college"] == "Atlanta" and "fromTo" not in session %}
 <h3>&nbsp; Emory Atlanta Campus Airport Rideshare Finder</h3>
 <br/>
@@ -59,4 +60,13 @@ Click <a href="home">Home</a> to reset your preferences and start again.
 <br/>
 
 {% endif %}
+<br/>
+<br/>
+<br/>
+Busiest Ridesharing Dates:
+{% for item in data %}
+    <tr>
+        <td>{{item.requestCount}}</td>
+    </tr>
+{% endfor %}     
 {% endblock %}

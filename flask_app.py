@@ -2,12 +2,14 @@ from flask import Flask, redirect, url_for, render_template, request, session, f
 from datetime import datetime, timedelta
 import cgi
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine, func
 from forms import rideshareForm, queryForm, updateForm
 import babel
 import dateutil
 from dateutil import parser
 from model import rides, rides_atl, db
 from socket import gethostname
+from sqlalchemy.orm import sessionmaker
 
 app = Flask(__name__)
 app.secret_key = "hello"
@@ -24,7 +26,7 @@ def __init__(self, name, telNumber):
 
 @app.route("/capture", methods=["POST", "GET"])
 def capture():
-    if "college" not in session:
+    if "college" not in session or "fromTo" not in session:
         return render_template("home.html")
     session["error"] = ''
     if request.method == "POST":
@@ -81,7 +83,7 @@ def rideList():
 
 @app.route("/query", methods=["POST", "GET"])
 def ridesQuery():
-    if "college" not in session:
+    if "college" not in session or "fromTo" not in session:
         return render_template("home.html")
     thisForm = queryForm()
     if request.method == "POST":
@@ -101,23 +103,26 @@ def ridesQuery():
 @app.route("/atl/*")
 @app.route("/home")
 def home():
+    engine = create_engine(app.config ['SQLALCHEMY_DATABASE_URI'])
+    Session = sessionmaker(bind=engine)
+    dbSession = Session()
+
     if "college" in session:
         session.pop("college")
     if "fromTo" in session:
         session.pop("fromTo")
-    print(request.args.get("college"))
-    print(request.args.get("fromTo"))
+    rideCountData = dbSession.query(rides.college, rides.fromTo, rides.rideDate, func.count(rides._id)).group_by(rides.college, rides.fromTo, rides.rideDate).all()
     if (request.args.get("college")):
         session["college"] = request.args.get("college")
         if request.args.get("fromTo"):
             session["fromTo"] = request.args.get("fromTo")
-        return render_template("home.html")
+        return render_template("home.html", data=rideCountData)
     else:
-        return render_template("home.html")   
+        return render_template("home.html", data=rideCountData)   
 
 @app.route("/update", methods=["POST", "GET"])
 def update():
-    if "college" not in session:
+    if "college" not in session or "fromTo" not in session:
         return render_template("home.html")
     thisForm = updateForm()
     session["error"] = ''
