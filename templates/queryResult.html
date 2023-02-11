@@ -48,7 +48,32 @@ Enter date and time details to find potential rideshares with others.
 &nbsp;
 
     <input type="submit" class="btn btn-primary btn-sm" value="Search">
-    </div>
+   &nbsp;&nbsp; All Day:
+   <input type="checkbox" class="big-checkbox" id="myCheckbox">
+   
+   <style>
+     .big-checkbox {
+       -webkit-transform: scale(1.25);
+       -ms-transform: scale(1.25);
+       transform: scale(1.25);
+     }
+   </style>
+   
+</div>
+
+    <script>
+      let checkboxClicked = false;
+    
+    document.getElementById("myCheckbox").onclick = function() {
+    var startTimeField = document.getElementById("startTime")
+    startTimeField.value = "00:00";
+    var endTimeField = document.getElementById("endTime")
+    endTimeField.value = "23:59";
+      };
+
+    </script>
+    
+
 </form>
 
 <br/>
