@@ -17,7 +17,7 @@ rows = cursor.fetchall()
 # If there are any rows
 if rows:
     # Insert the selected rows into the rides archive table
-    cursor.executemany("INSERT INTO rides_archive VALUES (?,?,?,?,?,?)", rows)
+    cursor.executemany("INSERT INTO rides_archive VALUES (?,?,?,?,?,?,?,?)", rows)
 
     # Delete the rows from the original table
     cursor.execute("DELETE FROM rides WHERE Date < ?", (seven_days_ago,))

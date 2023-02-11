@@ -57,6 +57,8 @@ Enter date and time details to find potential rideshares with others.
   <thead>
     <tr>
         <th scope="col">#</th>
+        <th scope="col">From/To</th>
+        <th scope="col">Campus</th>
         <th scope="col">Full Name</th>
         <th scope="col">Phone Number</th>
         <th scope="col">Ride Date</th>
@@ -68,6 +70,8 @@ Enter date and time details to find potential rideshares with others.
 {% for item in data %}
     <tr>
         <th scope="row">{{loop.index}}</th>
+        <td>{{item.fromTo}}</td>
+        <td>{{item.college}}</td>
         <td>{{item.name}}</td>
         <td>{{item.telNumber}}</td>
         <td>{{item.rideDate|strfdate}}</td>

@@ -2,6 +2,33 @@
 {% block title %}{% endblock %}
 {% block content %}
 
+{% if "college" not in session %}
+<br/>
+&nbsp;
+<b>Please select your Campus:</b>
+&nbsp;&nbsp;&nbsp;
+<a href="home?college=Oxford" class="btn btn-primary custom">Oxford Campus</a>
+&nbsp;&nbsp;&nbsp;
+<a href="home?college=Atlanta" class="btn btn-primary custom">Atlanta Campus</a>
+{% endif %}
+{% if session["college"] == "Atlanta" and "fromTo" not in session %}
+<h3>&nbsp; Emory Atlanta Campus Airport Rideshare Finder</h3>
+<br/>
+&nbsp;&nbsp;&nbsp;
+<a href="home?college=Atlanta&fromTo=from" class="btn btn-primary custom">Leaving Campus</a>
+&nbsp;&nbsp;&nbsp;
+<a href="home?college=Atlanta&fromTo=to" class="btn btn-primary custom">Returning to Campus</a>
+{% endif %}
+{% if session["college"] == "Oxford" and "fromTo" not in session%}
+<h3>        &nbsp;
+    Emory Oxford Campus Airport Rideshare Finder</h3>
+<br/>
+&nbsp;&nbsp;&nbsp;
+<a href="home?college=Oxford&fromTo=from" class="btn btn-primary custom">Leaving Oxford</a>
+&nbsp;&nbsp;&nbsp;
+<a href="home?college=Oxford&fromTo=to" class="btn btn-primary custom">Returning to Oxford</a>
+{% endif %}
+
 {% if "college" in session and "fromTo" in session %}
 Welcome!
 {% if session["college"] == "Oxford" and session["fromTo"] == "from" %}
@@ -12,11 +39,11 @@ Welcome!
 <b>Rideshares From Airport to Oxford Campus</b>
 <br/>
 {% endif %}
-{% if session["college"] == "Emory" and session["fromTo"] == "from" %}
+{% if session["college"] == "Atlanta" and session["fromTo"] == "from" %}
 <b>Rideshares From Atlanta Campus to Airport</b>
 <br/>
 {% endif %}
-{% if session["college"] == "Emory" and session["fromTo"] == "to" %}
+{% if session["college"] == "Atlanta" and session["fromTo"] == "to" %}
 <b>Rideshares From Airport to Atlanta Campus</b>
 <br/>
 {% endif %}

@@ -44,10 +44,10 @@
               {% if session["college"] == "Oxford" and session["fromTo"] == "to" %}
                   <h3>From ATL airport to Oxford Rideshare Finder</h3>
               {% endif %}
-              {% if session["college"] == "Emory" and session["fromTo"] == "from" %}
+              {% if session["college"] == "Atlanta" and session["fromTo"] == "from" %}
                   <h3>From Atlanta Campus to ATL Airport</h3>
               {% endif %}
-              {% if session["college"] == "Emory" and session["fromTo"] == "to" %}
+              {% if session["college"] == "Atlanta" and session["fromTo"] == "to" %}
                   <h3>From ATL Airport to Atlanta Campus</h3>
               {% endif %}
               {% endif %}
@@ -59,32 +59,6 @@
 <!-- JavaScript Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
         </body>
-        {% if "college" not in session %}
-        <br/>
-        &nbsp;
-        <b>Please select your Campus:</b>
-        &nbsp;&nbsp;&nbsp;
-        <a href="home?college=Oxford" class="btn btn-primary custom">Oxford Campus</a>
-        &nbsp;&nbsp;&nbsp;
-        <a href="home?college=Emory" class="btn btn-primary custom">Atlanta Campus</a>
-        {% endif %}
-        {% if session["college"] == "Emory" and "fromTo" not in session %}
-        <h3>&nbsp; Emory Atlanta Campus Airport Rideshare Finder</h3>
-        <br/>
-        &nbsp;&nbsp;&nbsp;
-        <a href="home?college=Emory&fromTo=from" class="btn btn-primary custom">Leaving Campus</a>
-        &nbsp;&nbsp;&nbsp;
-        <a href="home?college=Emory&fromTo=to" class="btn btn-primary custom">Returning to Campus</a>
-        {% endif %}
-        {% if session["college"] == "Oxford" and "fromTo" not in session%}
-        <h3>        &nbsp;
-            Emory Oxford Campus Airport Rideshare Finder</h3>
-        <br/>
-        &nbsp;&nbsp;&nbsp;
-        <a href="home?college=Oxford&fromTo=from" class="btn btn-primary custom">Leaving Oxford</a>
-        &nbsp;&nbsp;&nbsp;
-        <a href="home?college=Oxford&fromTo=to" class="btn btn-primary custom">Returning to Oxford</a>
-        {% endif %}
         <hr/>
         <footer> 
           <div class="d-flex flex-column">

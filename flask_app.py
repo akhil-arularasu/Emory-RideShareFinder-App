@@ -37,7 +37,7 @@ def capture():
         thisForm = rideshareForm()
         if thisForm.validate_on_submit():
             given_name = thisForm.name.data
-            dbRecord = rides.query.filter_by(name=given_name).first()
+            dbRecord = rides.query.filter_by(name=given_name, college=session["college"], fromTo=session["fromTo"]).first()
             if(dbRecord != None):
                 session["error"] = "Your ride information already exists in the system. To change your ride details, please go to "
                 return render_template("capture.html", form=thisForm)
@@ -52,7 +52,7 @@ def capture():
             db.session.add(currentPerson)
             db.session.commit()
             session["name"] = thisForm.name.data
-            rides_list = rides.query.filter(rides.rideTime.between((given_start_time.time()), (given_end_time.time())), rides.rideDate == thisForm.rideDate.data)
+            rides_list = rides.query.filter(rides.rideTime.between((given_start_time.time()), (given_end_time.time())), rides.rideDate == thisForm.rideDate.data, rides.college == session["college"], rides.fromTo == session["fromTo"])
             return render_template("success.html", form=thisForm, data=rides_list)
 
         else:
@@ -200,7 +200,7 @@ def save(text, filepath='suggestions.txt'):
 
 if __name__ == "__main__":
     with app.app_context():
-#        db.drop_all()
+  #      db.drop_all()
         db.create_all()
     if 'liveconsole' not in gethostname():
         app.run(debug=True)
