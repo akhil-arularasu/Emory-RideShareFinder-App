@@ -7,17 +7,19 @@ from forms import rideshareForm, queryForm, updateForm
 import babel
 import dateutil
 from dateutil import parser
-from model import rides, rides_atl, db
+from model import rides, db
 from socket import gethostname
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.secret_key = "hello"
 app.config ['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rides.sqlite3'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.permament_session_lifetime = timedelta(minutes=1)
+app.permament_session_lifetime = timedelta(minutes=30)
 
 db.app = app
 db.init_app(app)
+migrate = Migrate(app, db)
 
 def __init__(self, name, telNumber):
     self.name = name
