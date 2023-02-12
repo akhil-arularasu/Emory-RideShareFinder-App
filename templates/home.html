@@ -62,11 +62,27 @@ Click <a href="home">Home</a> to reset your preferences and start again.
 {% endif %}
 <br/>
 <br/>
-<br/>
-Busiest Ridesharing Dates:
+{% if session["college"] != "Atlanta" %}
+Busiest Rideshare Dates (Oxford):
+<br>
 {% for item in data %}
     <tr>
-        <td>{{item.requestCount}}</td>
+        <td><B>{{item.ridesCount}}</B> requests <B>{{item.fromTo}}</B> <B>{{item.college}} campus</B> on <B>{{item.rideDate}}</B></td>
+    </br>
     </tr>
-{% endfor %}     
+{% endfor %}
+{% endif %}
+<br/>
+{% if session["college"] != "Oxford" %}
+Busiest Rideshare Dates (Atlanta Campus):
+<br>
+{% for item in data2 %}
+    <tr>
+        <td><B>{{item.ridesCount}}</B> requests <B>{{item.fromTo}}</B> <B>{{item.college}} campus</B> on <B>{{item.rideDate}}</B></td>
+    </br>
+    </tr>
+{% endfor %}
+{% endif %}
+
+
 {% endblock %}
