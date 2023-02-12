@@ -23,10 +23,10 @@ def __init__(self, name, telNumber):
     self.name = name
     self.telNumber = telNumber
 
-@app.route("/capture", methods=["POST", "GET"])
-def capture():
+@app.route("/share", methods=["POST", "GET"])
+def share():
     if "college" not in session or "fromTo" not in session:
-        return render_template("home.html")
+        return redirect("/home")
     session["error"] = ''
     if request.method == "POST":
         '''
@@ -80,10 +80,10 @@ def rideList():
         '''
         return render_template('queryResult.html', data=rides_list)
 
-@app.route("/query", methods=["POST", "GET"])
+@app.route("/search", methods=["POST", "GET"])
 def ridesQuery():
     if "college" not in session or "fromTo" not in session:
-        return render_template("home.html")
+        return redirect("/home")
     thisForm = queryForm()
     if request.method == "POST":
         if thisForm.validate_on_submit():
@@ -127,7 +127,7 @@ def home():
 @app.route("/update", methods=["POST", "GET"])
 def update():
     if "college" not in session or "fromTo" not in session:
-        return render_template("home.html")
+        return redirect("/home")
     thisForm = updateForm()
     session["error"] = ''
     if request.method == "POST":
