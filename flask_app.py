@@ -7,7 +7,7 @@ from forms import rideshareForm, queryForm, updateForm
 import babel
 import dateutil
 from dateutil import parser
-from model import rides, db
+from model import rides, db, rides_archive
 from socket import gethostname
 from flask_migrate import Migrate
 
@@ -108,13 +108,22 @@ def home():
         session.pop("college")
     if "fromTo" in session:
         session.pop("fromTo")
+    today = datetime.today().date()
+    this_year = datetime.today().year
+    start_of_year = datetime(this_year, 1, 1)
+    end_of_year = datetime(this_year, 12, 31)
+    currentCount = rides.query.count()
+    archivesCount = rides_archive.query.filter(rides_archive.rideDate >= start_of_year, rides_archive.rideDate <= end_of_year).count()
+    totalCount = currentCount + archivesCount
     rideCountDataOxford = (db.session.query(rides.college, rides.fromTo, rides.rideDate, func.count(rides._id).label('ridesCount'))
     .filter(rides.college=="Oxford")
+    .filter(rides.rideDate >= today)
     .group_by(rides.college, rides.fromTo, rides.rideDate)
     .order_by(db.desc('ridesCount'))
     .limit(2))
     rideCountDataAtlanta = (db.session.query(rides.college, rides.fromTo, rides.rideDate, func.count(rides._id).label('ridesCount'))
     .filter(rides.college=="Atlanta")
+    .filter(rides.rideDate >= today)
     .group_by(rides.college, rides.fromTo, rides.rideDate)
     .order_by(db.desc('ridesCount'))
     .limit(2))
@@ -122,9 +131,9 @@ def home():
         session["college"] = request.args.get("college")
         if request.args.get("fromTo"):
             session["fromTo"] = request.args.get("fromTo")
-        return render_template("home.html", data=rideCountDataOxford, data2 = rideCountDataAtlanta)
+        return render_template("home.html", data=rideCountDataOxford, data2 = rideCountDataAtlanta, data3=totalCount)
     else:
-        return render_template("home.html", data=rideCountDataOxford, data2 = rideCountDataAtlanta)   
+        return render_template("home.html", data=rideCountDataOxford, data2 = rideCountDataAtlanta, data3=totalCount)   
 
 @app.route("/update", methods=["POST", "GET"])
 def update():

@@ -60,6 +60,38 @@ Click <a href="home">Home</a> to reset your preferences and start again.
 <br/>
 
 {% endif %}
+
+<style>
+
+    .wrapper.four {
+    text-align: left;
+}
+.four .type{
+    width: auto;
+    text-align: left;
+    margin: auto;
+}
+.four h3 {
+    width: 32ch;
+    border-right: 3px solid black;
+    text-align: left;
+    margin: 0.5rem auto;
+    white-space: nowrap;
+    overflow: hidden;
+    animation: typing 3.5s steps(13, end), blink-caret 0.35s step-end infinite alternate;
+}
+@-webkit-keyframes typing {
+    from {
+        width: 0;
+    }
+}
+@-webkit-keyframes blink-caret {
+    50% {
+        border-color: transparent;
+    }
+}
+
+</style>
 <br/>
 <br/>
 {% if session["college"] != "Atlanta" %}
@@ -83,6 +115,11 @@ Busiest Rideshare Dates (Atlanta Campus):
     </tr>
 {% endfor %}
 {% endif %}
-
+    <div class="four wrapper">
+        <div class="type" >
+        <h3 class="typing">Total RideShare Requests This Year: <B>{{data3}}</B>
+        </h3>
+        </div>
+    </div>
 
 {% endblock %}
