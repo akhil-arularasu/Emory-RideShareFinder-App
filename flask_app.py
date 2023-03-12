@@ -108,7 +108,7 @@ def home():
         session.pop("college")
     if "fromTo" in session:
         session.pop("fromTo")
-    today = datetime.today().date()
+    today = datetime.today().date() - timedelta(days=1)
     this_year = datetime.today().year
     start_of_year = datetime(this_year, 1, 1)
     end_of_year = datetime(this_year, 12, 31)
